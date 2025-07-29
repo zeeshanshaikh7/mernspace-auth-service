@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "user management service",
     "main": "index.js",
-    "type": "module",
+    "type": "commonjs",
     "scripts": {
         "dev": "nodemon src/server.ts",
         "test": "jest --watch --runInBand",
