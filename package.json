@@ -5,13 +5,15 @@
     "main": "index.js",
     "type": "commonjs",
     "scripts": {
-        "dev": "nodemon src/server.ts",
+        "dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
         "test": "jest --watch --runInBand",
         "format:fix": "npx prettier . --write",
         "format:check": "npx prettier . --check",
         "lint:check": "eslint . --check",
         "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
-        "prepare": "husky"
+        "prepare": "husky",
+        "start": "ts-node src/index.ts",
+        "typeorm": "typeorm-ts-node-commonjs"
     },
     "author": "zeeshan shaikh <skzeeshan10011@gmail.com>",
     "license": "ISC",
@@ -22,6 +24,7 @@
         "@types/jest": "^30.0.0",
         "@types/node": "^24.1.0",
         "@types/supertest": "^6.0.3",
+        "cross-env": "^10.0.0",
         "eslint": "^9.32.0",
         "husky": "^9.1.7",
         "jest": "^30.0.5",
@@ -43,6 +46,9 @@
         "dotenv": "^17.2.1",
         "express": "^5.1.0",
         "http-errors": "^2.0.0",
+        "pg": "^8.14.1",
+        "reflect-metadata": "^0.2.2",
+        "typeorm": "0.3.25",
         "winston": "^3.17.0"
     }
 }
