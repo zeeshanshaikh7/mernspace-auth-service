@@ -1,11 +1,8 @@
-import { createDefaultPreset } from 'ts-jest';
+// jest.config.js
+const { createDefaultPreset } = require('ts-jest');
 
-const defaultPreset = createDefaultPreset();
-
-/** @type {import("jest").Config} */
-const config = {
+module.exports = {
+    ...createDefaultPreset(),
     testEnvironment: 'node',
-    ...defaultPreset,
+    verbose: true,
 };
-
-export default config;
