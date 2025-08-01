@@ -1,7 +1,29 @@
+import { AppDataSource } from './../../src/config/data-source';
 import request from 'supertest';
 import app from '../../src/app';
+import { DataSource } from 'typeorm';
+import { truncateTable } from '../utils';
+import { User } from '../../src/entity/User';
 
 describe('POST /auth/register', () => {
+    let connection: DataSource;
+
+    beforeAll(async () => {
+        connection = await AppDataSource.initialize();
+        await connection.synchronize(true);
+    });
+
+    beforeEach(async () => {
+        // Database truncate
+        await truncateTable(connection);
+    });
+
+    afterAll(async () => {
+        if (connection && connection.isInitialized) {
+            await connection.destroy();
+        }
+    });
+
     describe('Given all fields', () => {
         it('should return the 201 status code', async () => {
             // 1. Arrange
@@ -48,11 +70,15 @@ describe('POST /auth/register', () => {
                 password: 'secrete',
             };
             // 2. Act
-            const response = await request(app)
-                .post('/auth/register')
-                .send(userData);
+            await request(app).post('/auth/register').send(userData);
 
             //assert
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            expect(users).toHaveLength(1);
+            expect(users[0].firstName).toBe(userData.firstName);
+            expect(users[0].lastName).toBe(userData.lastName);
+            expect(users[0].email).toBe(userData.email);
         });
     });
 
