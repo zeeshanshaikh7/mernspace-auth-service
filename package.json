@@ -9,7 +9,7 @@
         "test": "jest --watch --runInBand",
         "format:fix": "npx prettier . --write",
         "format:check": "npx prettier . --check",
-        "lint:check": "eslint . --check",
+        "lint:check": "eslint .",
         "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
         "prepare": "husky",
         "start": "ts-node src/index.ts",
@@ -40,13 +40,15 @@
     },
     "lint-staged": {
         "*.ts": [
-            "npm run format:fix"
+            "npm run format:fix",
+            "npm run link:fix"
         ]
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
         "dotenv": "^17.2.1",
         "express": "^5.1.0",
+        "express-validator": "^7.2.1",
         "http-errors": "^2.0.0",
         "pg": "^8.14.1",
         "reflect-metadata": "^0.2.2",
