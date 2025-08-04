@@ -2,8 +2,8 @@ import { AppDataSource } from './../../src/config/data-source';
 import request from 'supertest';
 import app from '../../src/app';
 import { DataSource } from 'typeorm';
-import { truncateTable } from '../utils';
 import { User } from '../../src/entity/User';
+import { Roles } from '../../src/constants';
 
 describe('POST /auth/register', () => {
     let connection: DataSource;
@@ -15,7 +15,8 @@ describe('POST /auth/register', () => {
 
     beforeEach(async () => {
         // Database truncate
-        await truncateTable(connection);
+        await connection.dropDatabase();
+        await connection.synchronize();
     });
 
     afterAll(async () => {
@@ -54,7 +55,6 @@ describe('POST /auth/register', () => {
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData);
-
             // 3. Assert
             expect(
                 (response.headers as Record<string, string>)['content-type'],
@@ -79,6 +79,41 @@ describe('POST /auth/register', () => {
             expect(users[0].firstName).toBe(userData.firstName);
             expect(users[0].lastName).toBe(userData.lastName);
             expect(users[0].email).toBe(userData.email);
+        });
+
+        it('should have property id in json response', async () => {
+            // 1. Arrange
+            const userData = {
+                firstName: 'zeeshan',
+                lastName: 'shaikh',
+                email: 'test@test.com',
+                password: 'secrete',
+            };
+            // 2. Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            // 3. Assert
+            expect(response.body).toHaveProperty('id');
+        });
+
+        it('should assign customer role', async () => {
+            // 1. Arrange
+            const userData = {
+                firstName: 'zeeshan',
+                lastName: 'shaikh',
+                email: 'test@test.com',
+                password: 'secrete',
+            };
+            // 2. Act
+            await request(app).post('/auth/register').send(userData);
+
+            //3. Assert
+            const userRepository = connection.getRepository(User);
+            const users = await userRepository.find();
+            expect(users[0]).toHaveProperty('role');
+            expect(users[0].role).toBe(Roles.CUSTOMER);
         });
     });
 
