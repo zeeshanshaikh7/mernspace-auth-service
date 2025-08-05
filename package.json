@@ -40,9 +40,7 @@
     },
     "lint-staged": {
         "*.ts": [
-            "npm run format:fix",
-            "npm run link:fix"
-        ]
+            "npm run format:fix"]
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
