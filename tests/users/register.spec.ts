@@ -4,6 +4,7 @@ import app from '../../src/app';
 import { DataSource } from 'typeorm';
 import { User } from '../../src/entity/User';
 import { Roles } from '../../src/constants';
+import { isJWT } from '../utils';
 
 describe('POST /auth/register', () => {
     let connection: DataSource;
@@ -156,6 +157,47 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(1);
         });
+
+        it('should return the access token and refresh token inside a cookie', async () => {
+            // 1. Arrange
+            const userData = {
+                firstName: 'zeeshan',
+                lastName: 'shaikh',
+                email: 'test@test.com',
+                password: 'pass@123456',
+            };
+
+            // 2. Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData);
+
+            interface Header {
+                ['set-cookie']: string[];
+            }
+
+            //3. Assert
+            const cookies =
+                (response.headers as unknown as Header)['set-cookie'] || [];
+
+            let accessToken: string | null = null;
+            let refreshToken: string | null = null;
+
+            cookies.forEach((cookie) => {
+                if (cookie.startsWith('accessToken=')) {
+                    accessToken = cookie.split(';')[0].split('=')[1];
+                }
+                if (cookie.startsWith('refreshToken=')) {
+                    refreshToken = cookie.split(';')[0].split('=')[1];
+                }
+            });
+
+            expect(accessToken).not.toBeNull();
+            expect(refreshToken).not.toBeNull();
+
+            expect(isJWT(accessToken)).toBeTruthy();
+            expect(isJWT(refreshToken)).toBeTruthy();
+        });
     });
 
     describe('Fields are missing', () => {
@@ -200,6 +242,7 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(0);
         });
+
         it('should return 400 status code if lastName is missing', async () => {
             //1. Arrange
             const userData = {
@@ -220,6 +263,7 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(0);
         });
+
         it('should return 400 status code if password is missing', async () => {
             //1. Arrange
             const userData = {
