@@ -1,10 +1,14 @@
 import { Config } from './config';
 import app from './app';
 import logger from './config/logger';
+import { AppDataSource } from './config/data-source';
 
-const startServer = () => {
+const startServer = async () => {
     const PORT = Config.PORT;
     try {
+        await AppDataSource.initialize();
+        logger.info('Database connection established');
+
         app.listen(PORT, () => {
             logger.info('Server Listening on port', { port: PORT });
         });
@@ -14,4 +18,11 @@ const startServer = () => {
     }
 };
 
-startServer();
+startServer()
+    .then(() => {
+        logger.info('Server started successfully');
+    })
+    .catch((error) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        logger.error('Error starting server', { error });
+    });
