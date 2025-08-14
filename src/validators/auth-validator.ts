@@ -31,4 +31,21 @@ const registerValidator = checkSchema({
     },
 });
 
-export default registerValidator;
+const loginValidator = checkSchema({
+    email: {
+        errorMessage: 'Email is required',
+        notEmpty: true,
+        trim: true,
+        isEmail: {
+            errorMessage: 'Invalid email format',
+        },
+    },
+    password: {
+        notEmpty: {
+            errorMessage: 'Password is required',
+        },
+        trim: true,
+    },
+});
+
+export { registerValidator, loginValidator };
