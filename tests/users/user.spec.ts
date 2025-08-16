@@ -81,4 +81,27 @@ describe('GET /auth/self', () => {
             role: data.role,
         });
     });
+
+    it('should not return password', async () => {
+        const userRepo = connection.getRepository(User);
+        const data = await userRepo.save({ ...userData, role: Roles.CUSTOMER });
+
+        const accessToken = jwks.token({
+            sub: data.id.toString(),
+            role: data.role,
+        });
+
+        const response = await request(app)
+            .get('/auth/self')
+            .set('Cookie', [`accessToken=${accessToken}`])
+            .send();
+
+        expect(response.body).toEqual({
+            id: data.id,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            role: data.role,
+        });
+    });
 });
