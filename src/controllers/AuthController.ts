@@ -7,6 +7,7 @@ import { UserService } from '../services/UserService';
 import { RegisterUserRequest } from '../types';
 import createHttpError from 'http-errors';
 import { CredentialService } from '../services/CredentialsService';
+import { AuthRequest } from '../config';
 
 export class AuthController {
     constructor(
@@ -83,14 +84,6 @@ export class AuthController {
     }
 
     async login(req: RegisterUserRequest, res: Response, next: NextFunction) {
-        // check if email exist in databse
-        // if not return 401
-        // compare password with hashed password
-        // if not match return 401
-        // generate access and refresh token
-        // send tokens in cookies
-        // respond with user id
-
         const { email, password } = req.body;
 
         const result = validationResult(req);
@@ -141,8 +134,6 @@ export class AuthController {
                 role: user.role,
             };
 
-            console.log('newRefreshToken', newRefreshToken.id.toString());
-
             const accessToken = this.tokenService.generateAccessToken(payload);
             const refreshToken = this.tokenService.generateRefreshToken(
                 payload,
@@ -168,6 +159,28 @@ export class AuthController {
         } catch (error) {
             next(error);
             return;
+        }
+    }
+
+    async self(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const user = await this.userService.findById(Number(req.auth.sub));
+
+            if (!user) {
+                const error = createHttpError(404, 'User not found');
+                next(error);
+                return;
+            }
+
+            res.status(200).json({
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role,
+            });
+        } catch (error) {
+            next(error);
         }
     }
 }

@@ -11,6 +11,8 @@ import {
     loginValidator,
     registerValidator,
 } from '../validators/auth-validator';
+import authenticate from '../middlewares/authenticate';
+import { AuthRequest } from '../config';
 
 const authRouter = express.Router();
 
@@ -40,6 +42,13 @@ authRouter.post(
     loginValidator,
     (req: Request, res: Response, next: NextFunction) =>
         authController.login(req, res, next),
+);
+
+authRouter.get(
+    '/self',
+    authenticate,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.self(req as AuthRequest, res, next),
 );
 
 export default authRouter;

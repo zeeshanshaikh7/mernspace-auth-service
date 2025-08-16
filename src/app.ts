@@ -3,9 +3,13 @@ import express, { Request, Response, NextFunction } from 'express';
 import { HttpError } from 'http-errors';
 import logger from './config/logger';
 import authRouter from './routes/auth';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(express.json());
+
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
     res.send('welcome to auth service new');

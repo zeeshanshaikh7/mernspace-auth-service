@@ -7,7 +7,7 @@ import { Roles } from '../../src/constants';
 import { isJWT } from '../utils';
 import { RefreshToken } from '../../src/entity/RefreshToken';
 
-describe.skip('POST /auth/register', () => {
+describe('POST /auth/register', () => {
     let connection: DataSource;
 
     beforeAll(async () => {

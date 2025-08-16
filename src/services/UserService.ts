@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Repository } from 'typeorm';
 import { User } from '../entity/User';
 import { UserData } from '../types';
@@ -28,7 +29,6 @@ export class UserService {
                 password: hashedPassword,
                 role: Roles.CUSTOMER,
             });
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             const error = createHttpError(
                 500,
@@ -40,5 +40,17 @@ export class UserService {
 
     async findByEmail(email: string) {
         return await this.userRepository.findOne({ where: { email } });
+    }
+
+    async findById(id: number) {
+        try {
+            return await this.userRepository.findOne({ where: { id } });
+        } catch (error) {
+            const httpError = createHttpError(
+                500,
+                'Failed to retrieve user from the database',
+            );
+            throw httpError;
+        }
     }
 }
