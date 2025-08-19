@@ -8,6 +8,7 @@ export default tseslint.config(
     {
         ignores: [
             'dist',
+            'scripts',
             'node_modules',
             '*.config.mjs',
             '*.config.js',

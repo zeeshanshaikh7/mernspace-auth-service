@@ -82,6 +82,13 @@ describe('GET /auth/self', () => {
         });
     });
 
+    it('should return 401 status code if token is not given', async () => {
+        const userRepo = connection.getRepository(User);
+        await userRepo.save({ ...userData, role: Roles.CUSTOMER });
+        const response = await request(app).get('/auth/self').send();
+        expect(response.statusCode).toBe(401);
+    });
+
     it('should not return password', async () => {
         const userRepo = connection.getRepository(User);
         const data = await userRepo.save({ ...userData, role: Roles.CUSTOMER });
