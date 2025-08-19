@@ -7,7 +7,7 @@ import { UserService } from '../services/UserService';
 import { RegisterUserRequest } from '../types';
 import createHttpError from 'http-errors';
 import { CredentialService } from '../services/CredentialsService';
-import { AuthRequest } from '../config';
+import { AuthRequest } from '../types';
 
 export class AuthController {
     constructor(
@@ -116,6 +116,7 @@ export class AuthController {
                     password,
                     user.password,
                 );
+
             if (!isPasswordValid) {
                 this.logger.warn('Login attempt with invalid password', {
                     email,
@@ -126,17 +127,18 @@ export class AuthController {
                 return;
             }
 
-            const newRefreshToken =
-                await this.tokenService.persistRefreshToken(user);
-
             const payload: JwtPayload = {
                 sub: String(user.id),
                 role: user.role,
             };
 
             const accessToken = this.tokenService.generateAccessToken(payload);
+
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(user);
+
             const refreshToken = this.tokenService.generateRefreshToken(
-                payload,
+                { ...payload, id: newRefreshToken.id.toString() },
                 newRefreshToken.id.toString(),
             );
 
@@ -179,6 +181,57 @@ export class AuthController {
                 lastName: user.lastName,
                 role: user.role,
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async refresh(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const payload: JwtPayload = {
+                sub: String(req.auth.sub),
+                role: req.auth.role,
+            };
+
+            const user = await this.userService.findById(Number(req.auth.sub));
+
+            if (!user) {
+                const error = createHttpError(
+                    400,
+                    'User with the token not found',
+                );
+                next(error);
+                return;
+            }
+
+            const accessToken = this.tokenService.generateAccessToken(payload);
+
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(user);
+
+            await this.tokenService.invalidateRefreshToken(
+                Number(req.auth.jti),
+            );
+
+            const refreshToken = this.tokenService.generateRefreshToken(
+                { ...payload, id: newRefreshToken.id.toString() },
+                newRefreshToken.id.toString(),
+            );
+
+            res.cookie('accessToken', accessToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60, // 1 hour
+                httpOnly: true,
+            });
+            res.cookie('refreshToken', refreshToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+                httpOnly: true,
+            });
+
+            res.status(200).json({ id: newRefreshToken.id });
         } catch (error) {
             next(error);
         }

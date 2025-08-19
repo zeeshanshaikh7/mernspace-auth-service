@@ -55,4 +55,8 @@ export class TokenService {
 
         return newRefreshToken;
     }
+
+    async invalidateRefreshToken(jti: number) {
+        await this.refreshTokenRepository.delete({ id: jti });
+    }
 }

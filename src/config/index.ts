@@ -1,6 +1,5 @@
 import { config } from 'dotenv';
 import path from 'path';
-import { Request } from 'express';
 
 config({ path: path.join(__dirname, `../../.env.${process.env.NODE_ENV}`) });
 
@@ -31,10 +30,3 @@ export const Config = {
     ACCESS_TOKEN_EXPIRES_IN,
     JWKS_URI,
 };
-
-export interface AuthRequest extends Request {
-    auth: {
-        sub: string;
-        role: string;
-    };
-}

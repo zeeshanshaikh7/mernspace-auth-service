@@ -1,3 +1,4 @@
+import { AuthRequest } from './../types';
 import express, { Request, Response, NextFunction } from 'express';
 import { AuthController } from '../controllers/AuthController';
 import { UserService } from '../services/UserService';
@@ -12,7 +13,7 @@ import {
     registerValidator,
 } from '../validators/auth-validator';
 import authenticate from '../middlewares/authenticate';
-import { AuthRequest } from '../config';
+import validateRefreshToken from '../middlewares/validateRefreshToken';
 
 const authRouter = express.Router();
 
@@ -49,6 +50,13 @@ authRouter.get(
     authenticate,
     (req: Request, res: Response, next: NextFunction) =>
         authController.self(req as AuthRequest, res, next),
+);
+
+authRouter.post(
+    '/refresh',
+    validateRefreshToken,
+    (req: Request, res: Response, next: NextFunction) =>
+        authController.refresh(req as AuthRequest, res, next),
 );
 
 export default authRouter;
