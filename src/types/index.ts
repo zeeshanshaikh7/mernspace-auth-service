@@ -6,6 +6,16 @@ export interface UserData {
     email: string;
     password: string;
 }
+/* =========================== Tenant ============================== */
+export interface TenantData {
+    name: string;
+    address: string;
+}
+export interface CreateTenantRequest extends Request {
+    body: TenantData;
+}
+
+/* =========================== User ============================== */
 
 export interface RegisterUserRequest extends Request {
     body: UserData;
