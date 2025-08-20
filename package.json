@@ -13,7 +13,9 @@
         "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
         "prepare": "husky",
         "start": "ts-node src/index.ts",
-        "typeorm": "typeorm-ts-node-commonjs"
+        "migration:create": "typeorm-ts-node-commonjs migration:create",
+        "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./src/config/data-source.ts",
+        "migration:run": "typeorm-ts-node-commonjs migration:run -d ./src/config/data-source.ts"
     },
     "author": "zeeshan shaikh <skzeeshan10011@gmail.com>",
     "license": "ISC",
