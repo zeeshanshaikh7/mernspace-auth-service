@@ -236,4 +236,33 @@ export class AuthController {
             next(error);
         }
     }
+
+    async logout(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            await this.tokenService.invalidateRefreshToken(
+                Number(req.auth.jti),
+            );
+
+            this.logger.info('Refresh token has been invalidated', {
+                id: req.auth.jti,
+            });
+
+            this.logger.info('user has been logged out', { id: req.auth.sub });
+
+            res.clearCookie('accessToken', {
+                domain: 'localhost',
+                sameSite: 'strict',
+                httpOnly: true,
+            });
+            res.clearCookie('refreshToken', {
+                domain: 'localhost',
+                sameSite: 'strict',
+                httpOnly: true,
+            });
+
+            res.status(200).json({ message: 'Logged out successfully' });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
