@@ -72,5 +72,16 @@ describe('POST /tenants', () => {
             expect(tenants).toHaveLength(0);
             expect(response.statusCode).toBe(401);
         });
+
+        it('should return 403 if user is not an admin', async () => {
+            const { accessToken } = await factory.createUserWithToken();
+            const response = await request(app)
+                .post('/tenants')
+                .set('Cookie', `accessToken=${accessToken}`)
+                .send(tenantData);
+            const tenants = await factory.getTenants();
+            expect(tenants).toHaveLength(0);
+            expect(response.statusCode).toBe(403);
+        });
     });
 });

@@ -1,10 +1,12 @@
-import { TenantService } from './../services/TenantService';
+import { Roles } from './../constants/index';
 import { Router } from 'express';
-import { TenantController } from '../controllers/TenantController';
 import { AppDataSource } from '../config/data-source';
-import { Tenant } from '../entity/Tenant';
 import logger from '../config/logger';
+import { TenantController } from '../controllers/TenantController';
+import { Tenant } from '../entity/Tenant';
 import authenticate from '../middlewares/authenticate';
+import { canAccess } from '../middlewares/canAccess';
+import { TenantService } from './../services/TenantService';
 
 const tenantRouter = Router();
 
@@ -14,7 +16,7 @@ const tenantService = new TenantService(tenantRepository);
 
 const tenantController = new TenantController(tenantService, logger);
 
-tenantRouter.post('/', authenticate, (req, res, next) =>
+tenantRouter.post('/', authenticate, canAccess(Roles.ADMIN), (req, res, next) =>
     tenantController.create(req, res, next),
 );
 
