@@ -1,3 +1,4 @@
+import { HttpError } from 'http-errors';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import createHttpError from 'http-errors';
 import { Repository } from 'typeorm';
@@ -29,6 +30,18 @@ export class TenantService {
         }
     }
 
+    async getAll() {
+        try {
+            return await this.tenantRepository.find();
+        } catch (error) {
+            const httpError = createHttpError(
+                500,
+                'Failed to retrieve tenants from the database',
+            );
+            throw httpError;
+        }
+    }
+
     async findByName(name: string) {
         return await this.tenantRepository.findOne({ where: { name } });
     }
@@ -42,6 +55,51 @@ export class TenantService {
                 'Failed to retrieve tenant from the database',
             );
             throw httpError;
+        }
+    }
+
+    async update(id: number, { name, address }: TenantData) {
+        try {
+            const tenant = await this.tenantRepository.findOne({
+                where: { id },
+            });
+
+            if (!tenant) {
+                const error = createHttpError(404, 'Tenant not found');
+                throw error;
+            }
+
+            tenant.name = name;
+            tenant.address = address;
+
+            return await this.tenantRepository.save(tenant);
+        } catch (error) {
+            if (error instanceof HttpError) {
+                throw error;
+            } else {
+                throw createHttpError(500, 'Internal Server Error');
+            }
+        }
+    }
+
+    async delete(id: number) {
+        try {
+            const tenant = await this.tenantRepository.findOne({
+                where: { id },
+            });
+            if (!tenant) {
+                const error = createHttpError(404, 'Tenant not found');
+                throw error;
+            }
+
+            await this.tenantRepository.remove(tenant);
+            return tenant;
+        } catch (error) {
+            if (error instanceof HttpError) {
+                throw error;
+            } else {
+                throw createHttpError(500, 'Internal Server Error');
+            }
         }
     }
 }

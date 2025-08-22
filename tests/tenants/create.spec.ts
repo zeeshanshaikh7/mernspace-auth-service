@@ -83,5 +83,37 @@ describe('POST /tenants', () => {
             expect(tenants).toHaveLength(0);
             expect(response.statusCode).toBe(403);
         });
+
+        it('should return the created tenant data', async () => {
+            const response = await request(app)
+                .post('/tenants')
+                .set('Cookie', `accessToken=${adminToken}`)
+                .send(tenantData);
+            expect(response.body).toEqual(
+                expect.objectContaining({
+                    id: expect.any(Number),
+                    name: tenantData.name,
+                    address: tenantData.address,
+                }),
+            );
+        });
+    });
+
+    describe('Field Validation', () => {
+        it('should return 400 if name is missing', async () => {
+            const response = await request(app)
+                .post('/tenants')
+                .set('Cookie', `accessToken=${adminToken}`)
+                .send({ address: '123 Main St' });
+            expect(response.statusCode).toBe(400);
+        });
+
+        it('should return 400 if address is missing', async () => {
+            const response = await request(app)
+                .post('/tenants')
+                .set('Cookie', `accessToken=${adminToken}`)
+                .send({ name: 'New Tenant' });
+            expect(response.statusCode).toBe(400);
+        });
     });
 });

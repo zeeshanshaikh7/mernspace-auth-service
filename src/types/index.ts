@@ -11,7 +11,7 @@ export interface TenantData {
     name: string;
     address: string;
 }
-export interface CreateTenantRequest extends Request {
+export interface TenantRequestBody extends Request {
     body: TenantData;
 }
 
