@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import bcrypt from 'bcrypt';
+import createHttpError from 'http-errors';
 import { Repository } from 'typeorm';
 import { User } from '../entity/User';
 import { UserData } from '../types';
-import createHttpError from 'http-errors';
-import { Roles } from '../constants';
-import bcrypt from 'bcrypt';
 
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
 
-    async create({ firstName, lastName, email, password, role }: UserData) {
+    async create({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        tenantId,
+    }: UserData) {
         const user = await this.userRepository.findOne({ where: { email } });
 
         if (user) {
@@ -28,6 +34,7 @@ export class UserService {
                 email,
                 password: hashedPassword,
                 role,
+                tenant: tenantId ? { id: tenantId } : undefined,
             });
         } catch (err) {
             const error = createHttpError(

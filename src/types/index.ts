@@ -6,6 +6,7 @@ export interface UserData {
     email: string;
     password: string;
     role: string;
+    tenantId?: number;
 }
 /* =========================== Tenant ============================== */
 export interface TenantData {

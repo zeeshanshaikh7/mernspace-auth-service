@@ -5,6 +5,7 @@ import { User } from '../../src/entity/User';
 import { AppDataSource } from '../../src/config/data-source';
 import createJWKSMock from 'mock-jwks';
 import { Roles } from '../../src/constants';
+import { Tenant } from '../../src/entity/Tenant';
 
 const userData = {
     firstName: 'zeeshan',
@@ -12,6 +13,7 @@ const userData = {
     email: 'test@example.com',
     password: 'hashedpassword',
     tenantId: 1,
+    role: Roles.MANAGER,
 };
 
 describe('POST /users', () => {
@@ -47,6 +49,15 @@ describe('POST /users', () => {
     });
 
     it('should persist the user in the database', async () => {
+        const tenantRepository = connection.getRepository(Tenant);
+
+        const tenant = await tenantRepository.save({
+            name: 'Test tenant',
+            address: 'Test address',
+        });
+
+        userData.tenantId = tenant.id;
+
         await request(app)
             .post('/users')
             .set('Cookie', `accessToken=${adminToken}`)

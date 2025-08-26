@@ -1,7 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { UserService } from '../services/UserService';
 import createHttpError, { HttpError } from 'http-errors';
-import { Roles } from '../constants';
 import { UserRequest } from '../types';
 import { validationResult } from 'express-validator';
 
@@ -9,7 +8,8 @@ export class UserController {
     constructor(private userService: UserService) {}
 
     async create(req: UserRequest, res: Response, next: NextFunction) {
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, role, tenantId } =
+            req.body;
 
         const result = validationResult(req);
         if (!result.isEmpty()) {
@@ -26,7 +26,8 @@ export class UserController {
                 lastName,
                 email,
                 password,
-                role: Roles.MANAGER,
+                role,
+                tenantId,
             });
             res.status(200).json({ id: user.id });
         } catch (error) {
