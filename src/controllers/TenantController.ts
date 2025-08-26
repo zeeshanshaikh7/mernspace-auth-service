@@ -65,7 +65,7 @@ export class TenantController {
         }
     }
 
-    async getById(req: Request, res: Response, next: NextFunction) {
+    async getOne(req: Request, res: Response, next: NextFunction) {
         const { id } = req.params;
 
         this.logger.debug(`new request to get tenant by id: ${id}`);

@@ -36,6 +36,7 @@ describe('POST /auth/register', () => {
                 email: 'test@test.com',
                 password: 'pass@123456',
             };
+
             // 2. Act
             const response = await request(app)
                 .post('/auth/register')
@@ -130,7 +131,7 @@ describe('POST /auth/register', () => {
             // 2. Act
             await request(app).post('/auth/register').send(userData);
             const userRepository = connection.getRepository(User);
-            const users = await userRepository.find();
+            const users = await userRepository.find({ select: ['password'] });
 
             // 3. Assert
             expect(users[0].password).not.toBe(userData.password);

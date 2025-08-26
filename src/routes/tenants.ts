@@ -39,7 +39,7 @@ tenantRouter.get(
     authenticate,
     canAccess(Roles.ADMIN),
     (req: Request, res: Response, next: NextFunction) =>
-        tenantController.getById(req, res, next),
+        tenantController.getOne(req, res, next),
 );
 
 tenantRouter.put(

@@ -101,7 +101,7 @@ export class AuthController {
             email,
         });
 
-        const user = await this.userService.findByEmail(email);
+        const user = await this.userService.findByEmailWithPassword(email);
 
         try {
             if (!user) {

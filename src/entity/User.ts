@@ -18,7 +18,7 @@ export class User {
     @Column()
     role: string;
 
-    @Column()
+    @Column({ select: false })
     password: string;
 
     @ManyToOne(() => Tenant)
