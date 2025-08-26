@@ -44,3 +44,9 @@ export interface IRefreshTokenPayload {
 export interface UserRequest extends Request {
     body: UserData;
 }
+
+export interface LimitedUserData {
+    firstName: string;
+    lastName: string;
+    role: string;
+}

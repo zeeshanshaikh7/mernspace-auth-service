@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
 import { Repository } from 'typeorm';
 import { User } from '../entity/User';
-import { UserData } from '../types';
+import { LimitedUserData, UserData } from '../types';
 
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
@@ -72,6 +72,19 @@ export class UserService {
                 'Failed to retrieve user from the database',
             );
             throw httpError;
+        }
+    }
+
+    async update(userId: number, data: LimitedUserData) {
+        try {
+            return await this.userRepository.update(userId, data);
+        } catch (err) {
+            const error = createHttpError(
+                500,
+
+                'Failed to update the user in the database',
+            );
+            throw error;
         }
     }
 }

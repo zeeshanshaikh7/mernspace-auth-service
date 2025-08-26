@@ -8,6 +8,7 @@ import { UserService } from '../services/UserService';
 import { UserRequest } from '../types';
 import { registerValidator } from '../validators/auth-validator';
 import { Roles } from './../constants/index';
+import logger from '../config/logger';
 
 const userRouter = Router();
 
@@ -15,7 +16,7 @@ const userRepository = AppDataSource.getRepository(User);
 
 const userService = new UserService(userRepository);
 
-const userController = new UserController(userService);
+const userController = new UserController(userService, logger);
 
 userRouter.post(
     '/',
