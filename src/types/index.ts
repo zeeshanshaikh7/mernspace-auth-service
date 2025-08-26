@@ -5,6 +5,7 @@ export interface UserData {
     lastName: string;
     email: string;
     password: string;
+    role: string;
 }
 /* =========================== Tenant ============================== */
 export interface TenantData {
@@ -37,4 +38,8 @@ export interface AuthRequest extends Request {
 export interface IRefreshTokenPayload {
     jti: string;
     sub: string;
+}
+
+export interface UserRequest extends Request {
+    body: UserData;
 }

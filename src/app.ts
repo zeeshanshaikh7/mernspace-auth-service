@@ -6,6 +6,7 @@ import authRouter from './routes/auth';
 import tenantRouter from './routes/tenants';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import userRouter from './routes/user';
 // import authenticate from './middlewares/authenticate';
 
 const app = express();
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRouter);
 app.use('/tenants', tenantRouter);
+app.use('/users', userRouter);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {

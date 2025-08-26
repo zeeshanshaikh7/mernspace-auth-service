@@ -94,18 +94,15 @@ export class TenantController {
 
     async update(req: TenantRequestBody, res: Response, next: NextFunction) {
         const { id } = req.params;
-        const { name, address } = req.body;
+        const tenantData = req.body;
 
-        this.logger.debug(`new request to update tenant: ${id}`, {
-            name,
-            address,
-        });
+        this.logger.debug(`new request to update tenant: ${id}`, tenantData);
 
         try {
-            const tenant = await this.tenantService.update(Number(id), {
-                name,
-                address,
-            });
+            const tenant = await this.tenantService.update(
+                Number(id),
+                tenantData,
+            );
 
             this.logger.info(`Tenant has been updated: ${tenant.id}`, {
                 tenant,

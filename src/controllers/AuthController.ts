@@ -8,6 +8,7 @@ import { RegisterUserRequest } from '../types';
 import createHttpError from 'http-errors';
 import { CredentialService } from '../services/CredentialsService';
 import { AuthRequest } from '../types';
+import { Roles } from '../constants';
 
 export class AuthController {
     constructor(
@@ -46,6 +47,7 @@ export class AuthController {
                 lastName,
                 email,
                 password,
+                role: Roles.CUSTOMER,
             });
             this.logger.info('user has been registered', { id: response.id });
 
