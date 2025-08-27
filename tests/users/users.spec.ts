@@ -110,7 +110,7 @@ describe('POST /users', () => {
     });
 });
 
-describe('Patch /users/:id', () => {
+describe('PATCH /users/:id', () => {
     let connection: DataSource;
     let jwks: ReturnType<typeof createJWKSMock>;
     let adminToken: string;
@@ -196,5 +196,50 @@ describe('Patch /users/:id', () => {
             });
 
         expect(response.statusCode).toBe(404);
+    });
+});
+
+describe('PATCH /users/:id', () => {
+    let connection: DataSource;
+    let jwks: ReturnType<typeof createJWKSMock>;
+    let adminToken: string;
+    let factory: TestDataFactory;
+
+    beforeAll(async () => {
+        jwks = createJWKSMock('http://localhost:5501');
+        connection = await AppDataSource.initialize();
+        await connection.synchronize(true);
+        factory = new TestDataFactory(connection, jwks);
+    });
+
+    beforeEach(async () => {
+        jwks.start();
+        // Database truncate
+        await connection.dropDatabase();
+        await connection.synchronize();
+        adminToken = jwks.token({
+            sub: '1',
+            role: Roles.ADMIN,
+        });
+    });
+
+    afterEach(async () => {
+        jwks.stop();
+    });
+
+    afterAll(async () => {
+        if (connection && connection.isInitialized) {
+            await connection.destroy();
+        }
+    });
+
+    it('should return 200 status code', async () => {
+        const response = await request(app)
+            .get(`/users`)
+            .set('Cookie', `accessToken=${adminToken}`)
+            .send({
+                firstName: 'sample',
+            });
+        expect(response.statusCode).toBe(200);
     });
 });
