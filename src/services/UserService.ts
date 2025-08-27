@@ -76,15 +76,10 @@ export class UserService {
     }
 
     async update(userId: number, data: LimitedUserData) {
-        try {
-            return await this.userRepository.update(userId, data);
-        } catch (err) {
-            const error = createHttpError(
-                500,
-
-                'Failed to update the user in the database',
-            );
-            throw error;
+        const result = await this.userRepository.update(userId, data);
+        if (result.affected === 0) {
+            throw createHttpError(404, `User with id ${userId} not found`);
         }
+        return result;
     }
 }

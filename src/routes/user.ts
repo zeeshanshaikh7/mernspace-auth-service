@@ -27,4 +27,12 @@ userRouter.post(
         userController.create(req as UserRequest, res, next),
 );
 
+userRouter.patch(
+    '/:id',
+    authenticate,
+    canAccess(Roles.ADMIN),
+    (req: Request, res: Response, next: NextFunction) =>
+        userController.update(req as UserRequest, res, next),
+);
+
 export default userRouter;

@@ -24,6 +24,20 @@ export class TestDataFactory {
         return await userRepo.save(defaultData);
     }
 
+    async createUserWithTenantId() {
+        const userRepository = this.connection.getRepository(User);
+        const tenant = await this.createTenant();
+        const userData = {
+            firstName: 'zeeshan',
+            lastName: 'shaikh',
+            email: 'test@example.com',
+            password: 'hashedpassword',
+            tenant: tenant,
+            role: Roles.MANAGER,
+        };
+        return await userRepository.save(userData);
+    }
+
     async createUserWithToken(userData: Partial<User> = {}) {
         const user = await this.createUser(userData);
         const accessToken = this.jwks.token({
@@ -46,6 +60,11 @@ export class TestDataFactory {
     // Helper methods to get repositories
     getUserRepo() {
         return this.connection.getRepository(User);
+    }
+
+    async getUsers() {
+        const userRepo = this.getUserRepo();
+        return await userRepo.find();
     }
 
     getTenantRepo() {
