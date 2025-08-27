@@ -24,13 +24,13 @@ export class TestDataFactory {
         return await userRepo.save(defaultData);
     }
 
-    async createUserWithTenantId() {
+    async createUserWithTenantId(email = 'test@example.com') {
         const userRepository = this.connection.getRepository(User);
         const tenant = await this.createTenant();
         const userData = {
             firstName: 'zeeshan',
             lastName: 'shaikh',
-            email: 'test@example.com',
+            email,
             password: 'hashedpassword',
             tenant: tenant,
             role: Roles.MANAGER,

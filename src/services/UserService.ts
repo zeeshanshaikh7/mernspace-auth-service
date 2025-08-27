@@ -82,4 +82,26 @@ export class UserService {
         }
         return result;
     }
+
+    async getAll() {
+        const users = await this.userRepository.find();
+        return users;
+    }
+
+    async getOne(userId: number) {
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+        });
+        return user;
+    }
+
+    async delete(userId: number) {
+        const result = await this.userRepository.delete(userId);
+
+        if (result.affected === 0) {
+            throw createHttpError(404, `User with id ${userId} not found`);
+        }
+
+        return result;
+    }
 }

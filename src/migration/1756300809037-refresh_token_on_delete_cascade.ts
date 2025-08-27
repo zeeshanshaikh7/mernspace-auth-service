@@ -1,13 +1,14 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddRefreshTokenCascade1756225493471 implements MigrationInterface {
-    name = 'AddRefreshTokenCascade1756225493471';
+export class RefreshTokenOnDeleteCascade1756300809037
+    implements MigrationInterface
+{
+    name = 'RefreshTokenOnDeleteCascade1756300809037';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `ALTER TABLE "refreshTokens" DROP CONSTRAINT "FK_265bec4e500714d5269580a0219"`,
         );
-
         await queryRunner.query(
             `ALTER TABLE "refreshTokens" ADD CONSTRAINT "FK_265bec4e500714d5269580a0219" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
         );
@@ -17,7 +18,6 @@ export class AddRefreshTokenCascade1756225493471 implements MigrationInterface {
         await queryRunner.query(
             `ALTER TABLE "refreshTokens" DROP CONSTRAINT "FK_265bec4e500714d5269580a0219"`,
         );
-
         await queryRunner.query(
             `ALTER TABLE "refreshTokens" ADD CONSTRAINT "FK_265bec4e500714d5269580a0219" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
         );

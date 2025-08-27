@@ -35,4 +35,28 @@ userRouter.patch(
         userController.update(req as UserRequest, res, next),
 );
 
+userRouter.get(
+    '/',
+    authenticate,
+    canAccess(Roles.ADMIN),
+    (req: Request, res: Response, next: NextFunction) =>
+        userController.getAll(req, res, next),
+);
+
+userRouter.get(
+    '/:id',
+    authenticate,
+    canAccess(Roles.ADMIN),
+    (req: Request, res: Response, next: NextFunction) =>
+        userController.getOne(req, res, next),
+);
+
+userRouter.delete(
+    '/:id',
+    authenticate,
+    canAccess(Roles.ADMIN),
+    (req: Request, res: Response, next: NextFunction) =>
+        userController.destroy(req, res, next),
+);
+
 export default userRouter;

@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+import { Response, NextFunction, Request } from 'express';
 import { UserService } from '../services/UserService';
 import createHttpError, { HttpError } from 'http-errors';
 import { UserRequest } from '../types';
@@ -64,6 +64,52 @@ export class UserController {
                 role,
             });
             res.json({ id: Number(userId) });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const users = await this.userService.getAll();
+            res.status(200).json(users);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getOne(req: Request, res: Response, next: NextFunction) {
+        const userId = req.params.id;
+
+        if (isNaN(Number(userId))) {
+            next(createHttpError(400, 'Invalid URL params'));
+            return;
+        }
+        try {
+            const user = await this.userService.getOne(Number(userId));
+            if (!user) {
+                next(createHttpError(404, 'User not found'));
+                return;
+            }
+            res.status(200).json(user);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async destroy(req: Request, res: Response, next: NextFunction) {
+        const userId = req.params.id;
+
+        if (isNaN(Number(userId))) {
+            next(createHttpError(400, 'Invalid URL params'));
+            return;
+        }
+        try {
+            await this.userService.delete(Number(userId));
+
+            res.status(200).json({
+                message: `User with userId ${userId} deleted from the database`,
+            });
         } catch (error) {
             next(error);
         }
