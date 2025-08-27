@@ -6,6 +6,7 @@
     "type": "commonjs",
     "scripts": {
         "dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
+        "build":"tsc",
         "test": "jest --watch --runInBand",
         "format:fix": "npx prettier . --write",
         "format:check": "npx prettier . --check",
