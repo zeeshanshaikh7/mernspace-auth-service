@@ -1,7 +1,5 @@
-import fs from 'fs';
 import createHttpError from 'http-errors';
 import { JwtPayload, sign } from 'jsonwebtoken';
-import path from 'path';
 import { Repository } from 'typeorm';
 import { Config } from '../config';
 import { RefreshToken } from '../entity/RefreshToken';
@@ -11,19 +9,15 @@ export class TokenService {
     constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
 
     generateAccessToken(payload: JwtPayload) {
-        let privateKey: Buffer;
-        try {
-            privateKey = fs.readFileSync(
-                path.join(__dirname, '../../certs/private.pem'),
-            );
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (err) {
+        if (!Config.PRIVATE_KEY) {
             const error = createHttpError(
                 500,
                 'Error while reading private key',
             );
             throw error;
         }
+
+        const privateKey = Config.PRIVATE_KEY;
 
         const accessToken = sign(payload, privateKey, {
             algorithm: 'RS256',
@@ -35,7 +29,15 @@ export class TokenService {
     }
 
     generateRefreshToken(payload: JwtPayload, payloadId: string) {
-        const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+        if (!Config.REFRESH_TOKEN_SECRET) {
+            const error = createHttpError(
+                500,
+                'Error while reading refresh token secrete',
+            );
+            throw error;
+        }
+
+        const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET, {
             algorithm: 'HS256',
             expiresIn: '1y',
             issuer: 'auth-service',
