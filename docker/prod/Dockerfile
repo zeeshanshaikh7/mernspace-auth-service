@@ -2,7 +2,8 @@ FROM node:20-alpine as builder
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copy dependency files
+COPY package.json package-lock.json ./
 
 RUN npm ci
 
@@ -16,9 +17,9 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-COPY package*.json ./
-
-RUN npm ci --only=production --ignore-scripts
+# Copy only what's needed
+COPY package.json package-lock.json ./
+RUN npm ci --only=production --ignore-scripts && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 
