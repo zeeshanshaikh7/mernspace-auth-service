@@ -6,7 +6,7 @@
     "type": "commonjs",
     "scripts": {
         "dev": "cross-env NODE_ENV=dev nodemon src/server.ts",
-        "build":"tsc",
+        "build": "tsc",
         "lint": "eslint .",
         "test": "jest --no-cache --coverage --all --runInBand",
         "test:watch": "jest --watch --runInBand",
@@ -52,7 +52,8 @@
         ]
     },
     "dependencies": {
-        "bcrypt": "^6.0.0",
+        "@types/bcryptjs": "^2.4.6",
+        "bcryptjs": "^3.0.2",
         "cookie-parser": "^1.4.7",
         "dotenv": "^17.2.1",
         "express": "^5.1.0",
