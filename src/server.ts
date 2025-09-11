@@ -23,6 +23,5 @@ startServer()
         logger.info('Server started successfully');
     })
     .catch((error) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         logger.error('Error starting server', { error });
     });

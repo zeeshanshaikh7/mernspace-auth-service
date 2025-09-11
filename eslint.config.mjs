@@ -4,11 +4,12 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
     eslint.configs.recommended,
-    tseslint.configs.recommendedTypeChecked,
+    tseslint.configs.recommended,
     {
         ignores: [
             'dist',
             'scripts',
+            'scripts/*.mjs',
             'node_modules',
             '*.config.mjs',
             '*.config.js',

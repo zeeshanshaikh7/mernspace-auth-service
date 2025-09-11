@@ -23,6 +23,7 @@ export const isJWT = (token: string | null): boolean => {
         parts.forEach((part) => {
             Buffer.from(part, 'base64').toString('utf-8');
         });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
         return false;
     }

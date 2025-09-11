@@ -3,7 +3,6 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 import app from '../../src/app';
 import { Roles } from '../../src/constants';
-import { TestDataFactory } from '../utils/TestDataFactory';
 import { AppDataSource } from './../../src/config/data-source';
 
 const tenantData = {
@@ -14,14 +13,12 @@ const tenantData = {
 describe('GET /tenants', () => {
     let connection: DataSource;
     let jwks: ReturnType<typeof createJWKSMock>;
-    let factory: TestDataFactory;
     let adminToken: string;
 
     beforeAll(async () => {
         jwks = createJWKSMock('http://localhost:5501');
         connection = await AppDataSource.initialize();
         await connection.synchronize(true);
-        factory = new TestDataFactory(connection, jwks);
     });
 
     beforeEach(async () => {
@@ -67,14 +64,12 @@ describe('GET /tenants', () => {
 describe('GET /tenants/:id', () => {
     let connection: DataSource;
     let jwks: ReturnType<typeof createJWKSMock>;
-    let factory: TestDataFactory;
     let adminToken: string;
 
     beforeAll(async () => {
         jwks = createJWKSMock('http://localhost:5501');
         connection = await AppDataSource.initialize();
         await connection.synchronize(true);
-        factory = new TestDataFactory(connection, jwks);
     });
 
     beforeEach(async () => {
