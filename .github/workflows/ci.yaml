@@ -10,7 +10,21 @@ jobs:
     build-and-test:
         name: Build the project
         runs-on: ubuntu-latest
-        # if: github.event_name == 'pull_request'
+        # Add PostgreSQL service container
+        services:
+            postgres:
+                image: postgres:15
+                env:
+                    POSTGRES_USER: testuser
+                    POSTGRES_PASSWORD: testpassword
+                    POSTGRES_DB: testdb
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432:5432
         steps:
             - uses: actions/checkout@v3
             - name: Install dependencies
@@ -20,11 +34,12 @@ jobs:
             - name: Test and coverage
               run: npm run test
               env:
-                  DB_HOST: ${{ secrets.TEST_DB_HOST }}
-                  DB_PORT: ${{ secrets.TEST_DB_PORT }}
-                  DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
-                  DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-                  DB_NAME: ${{ secrets.TEST_DB_NAME }}
+                  # Use localhost for CI database connection
+                  DB_HOST: localhost
+                  DB_PORT: 5432
+                  DB_USERNAME: testuser
+                  DB_PASSWORD: testpassword
+                  DB_NAME: testdb
                   REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
                   JWKS_URI: ${{ secrets.JWKS_URI }}
                   PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
@@ -41,7 +56,7 @@ jobs:
         needs: build-and-test
         runs-on: ubuntu-latest
         env:
-            IMAGE_NAME: zeeshanshaikh7/mernspace-auth-service # codersgyan/mernstack_auth_service:build-2
+            IMAGE_NAME: zeeshanshaikh7/mernspace-auth-service
             IMAGE_TAG: build-${{ github.run_number }}
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         steps:
