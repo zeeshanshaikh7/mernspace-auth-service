@@ -22,6 +22,6 @@ RUN npm ci --ignore-scriptsf
 
 COPY --from=builder /app/dist ./
 
-EXPOSE 5500
+EXPOSE 5501
 
 CMD [ "node","src/server.js" ]
