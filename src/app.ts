@@ -7,11 +7,18 @@ import tenantRouter from './routes/tenants';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import userRouter from './routes/user';
+import cors from 'cors';
 // import authenticate from './middlewares/authenticate';
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+    cors({
+        origin: '*',
+        credentials: true,
+    }),
+);
 
 const publicPath = path.join(__dirname, '../public');
 
