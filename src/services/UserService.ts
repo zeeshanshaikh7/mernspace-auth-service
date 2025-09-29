@@ -65,7 +65,12 @@ export class UserService {
 
     async findById(id: number) {
         try {
-            return await this.userRepository.findOne({ where: { id } });
+            return await this.userRepository.findOne({
+                where: { id },
+                relations: {
+                    tenant: true,
+                },
+            });
         } catch (error) {
             const httpError = createHttpError(
                 500,
