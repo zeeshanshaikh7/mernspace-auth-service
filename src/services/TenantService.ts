@@ -6,7 +6,7 @@ import { Tenant } from '../entity/Tenant';
 import { TenantData } from '../types';
 
 export class TenantService {
-    constructor(private tenantRepository: Repository<Tenant>) {}
+    constructor(private readonly tenantRepository: Repository<Tenant>) {}
 
     async create({ name, address }: TenantData) {
         const tenant = await this.tenantRepository.findOne({ where: { name } });

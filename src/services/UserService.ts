@@ -6,7 +6,7 @@ import { User } from '../entity/User';
 import { LimitedUserData, UserData } from '../types';
 
 export class UserService {
-    constructor(private userRepository: Repository<User>) {}
+    constructor(private readonly userRepository: Repository<User>) {}
 
     async create({
         firstName,
