@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import userRouter from './routes/user';
 import cors from 'cors';
-// import authenticate from './middlewares/authenticate';
 
 const app = express();
 
@@ -41,13 +40,6 @@ app.use('/users', userRouter);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
     logger.error(error.message);
-    // console.log('===== GLOBAL ERROR HANDLER =====');
-    // console.log('Error object:', error);
-    // console.log('Error name:', error.name);
-    // console.log('Error message:', error.message);
-    // console.log('Error status:', error.status);
-    // console.log('Error statusCode:', error.statusCode);
-    // console.log('================================');
 
     const statusCode = error.statusCode || error.status || 500;
 
