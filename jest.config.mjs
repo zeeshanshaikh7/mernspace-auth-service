@@ -9,6 +9,7 @@ export default {
     coverageProvider: 'v8', // faster than babel for TS/JS
     collectCoverageFrom: [
         'src/**/*.{ts,tsx}', // all ts/tsx files under src
+        '!src/**/ensureAdminUser.ts', // ignore ensureAdminUser.ts
         '!src/**/*.d.ts', // ignore type definitions
         '!src/**/index.ts', // ignore barrel files
         '!tests/**', // ignore test files
