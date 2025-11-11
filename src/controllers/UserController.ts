@@ -1,8 +1,8 @@
 import { Response, NextFunction, Request } from 'express';
 import { UserService } from '../services/UserService';
 import createHttpError, { HttpError } from 'http-errors';
-import { UserRequest } from '../types';
-import { validationResult } from 'express-validator';
+import { UpdateUserRequest, UserQueryParams, UserRequest } from '../types';
+import { matchedData, validationResult } from 'express-validator';
 import { Logger } from 'winston';
 
 export class UserController {
@@ -17,11 +17,7 @@ export class UserController {
 
         const result = validationResult(req);
         if (!result.isEmpty()) {
-            res.status(400).json({
-                error: 'Validation error',
-                errors: result.array(),
-            });
-            return;
+            return next(createHttpError(400, result.array()[0].msg as string));
         }
 
         try {
@@ -44,8 +40,8 @@ export class UserController {
         }
     }
 
-    async update(req: UserRequest, res: Response, next: NextFunction) {
-        const { firstName, lastName, role } = req.body;
+    async update(req: UpdateUserRequest, res: Response, next: NextFunction) {
+        const { firstName, lastName, role, email, tenantId } = req.body;
         const userId = req.params.id;
 
         if (isNaN(Number(userId))) {
@@ -62,6 +58,8 @@ export class UserController {
                 firstName,
                 lastName,
                 role,
+                email,
+                tenantId,
             });
             res.json({ id: Number(userId) });
         } catch (error) {
@@ -70,9 +68,19 @@ export class UserController {
     }
 
     async getAll(req: Request, res: Response, next: NextFunction) {
+        const validatedQuery = matchedData(req, { onlyValidData: true });
+
+        console.log(validatedQuery);
         try {
-            const users = await this.userService.getAll();
-            res.status(200).json(users);
+            const [users, count] = await this.userService.getAll(
+                validatedQuery as UserQueryParams,
+            );
+            res.status(200).json({
+                total: count,
+                currentPage: validatedQuery.currentPage,
+                perPage: validatedQuery.perPage,
+                data: users,
+            });
         } catch (error) {
             next(error);
         }

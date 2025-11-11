@@ -8,6 +8,7 @@ import authenticate from '../middlewares/authenticate';
 import { canAccess } from '../middlewares/canAccess';
 import { TenantService } from './../services/TenantService';
 import { tenantValidator } from '../validators/tenantValidator';
+import listUserValidator from '../validators/list-users-validator';
 
 const tenantRouter = Router();
 
@@ -28,8 +29,7 @@ tenantRouter.post(
 
 tenantRouter.get(
     '/',
-    authenticate,
-    canAccess(Roles.ADMIN),
+    listUserValidator,
     (req: Request, res: Response, next: NextFunction) =>
         tenantController.getAll(req, res, next),
 );

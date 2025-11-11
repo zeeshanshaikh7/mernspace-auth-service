@@ -2,8 +2,8 @@ import { NextFunction, Response, Request } from 'express';
 import createHttpError, { HttpError } from 'http-errors';
 import { Logger } from 'winston';
 import { TenantService } from '../services/TenantService';
-import { TenantRequestBody } from '../types';
-import { validationResult } from 'express-validator';
+import { TenantQueryParams, TenantRequestBody } from '../types';
+import { matchedData, validationResult } from 'express-validator';
 
 export class TenantController {
     constructor(
@@ -45,16 +45,23 @@ export class TenantController {
         }
     }
 
-    async getAll(_req: Request, res: Response, next: NextFunction) {
+    async getAll(req: Request, res: Response, next: NextFunction) {
         this.logger.debug('new request to get all tenants');
 
-        try {
-            const tenants = await this.tenantService.getAll();
-            this.logger.info(`Tenants have been retrieved`, {
-                tenants,
-            });
+        const validatedQuery = matchedData(req, { onlyValidData: true });
 
-            res.status(200).json(tenants);
+        try {
+            const [tenants, count] = await this.tenantService.getAll(
+                validatedQuery as TenantQueryParams,
+            );
+
+            this.logger.info('All tenant have been fetched');
+            res.json({
+                currentPage: validatedQuery.currentPage as number,
+                perPage: validatedQuery.perPage as number,
+                total: count,
+                data: tenants,
+            });
         } catch (error) {
             this.logger.error('Error retrieving tenants', { error });
             if (error instanceof HttpError) {

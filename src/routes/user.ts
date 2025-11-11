@@ -9,6 +9,8 @@ import { UserRequest } from '../types';
 import { registerValidator } from '../validators/auth-validator';
 import { Roles } from './../constants/index';
 import logger from '../config/logger';
+import listUserValidator from '../validators/list-users-validator';
+import updateUserValidator from '../validators/update-user-validator';
 
 const userRouter = Router();
 
@@ -31,6 +33,7 @@ userRouter.patch(
     '/:id',
     authenticate,
     canAccess(Roles.ADMIN),
+    updateUserValidator,
     (req: Request, res: Response, next: NextFunction) =>
         userController.update(req as UserRequest, res, next),
 );
@@ -38,6 +41,7 @@ userRouter.patch(
 userRouter.get(
     '/',
     authenticate,
+    listUserValidator,
     canAccess(Roles.ADMIN),
     (req: Request, res: Response, next: NextFunction) =>
         userController.getAll(req, res, next),
