@@ -59,6 +59,9 @@ export class UserService {
                 'password',
                 'role',
             ],
+            relations: {
+                tenant: true,
+            },
         });
     }
 

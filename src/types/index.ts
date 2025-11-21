@@ -30,6 +30,7 @@ export type AuthCookie = {
 
 export interface AuthRequest extends Request {
     auth: {
+        tenant: string;
         sub: string;
         role: string;
         jti?: string; // only for refresh tokens
