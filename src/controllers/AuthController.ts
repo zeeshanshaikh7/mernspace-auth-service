@@ -183,6 +183,7 @@ export class AuthController {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 role: user.role,
+                tenant: user.tenant,
             });
         } catch (error) {
             next(error);
